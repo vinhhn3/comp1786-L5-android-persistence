@@ -249,9 +249,9 @@ Voila, we can create 2 activities and use Shared Preference to store data
 
 ![img_8.png](img_8.png)
 
-Using the Device File Explorer we can have a look at the content of the file
+Using the `Device File Explorer` we can have a look at the content of the file
 
-Navigate data -> data -> com.example.comp1786_l5_android_persistence -> shared_prefs
+Navigate `data` -> `dat`a -> `com.example.comp1786_l5_android_persistence` -> `shared_prefs`
 
 ![img_9.png](img_9.png)
 
