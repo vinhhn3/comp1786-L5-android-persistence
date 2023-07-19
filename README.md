@@ -210,6 +210,11 @@ Add two functions `getDetails()` and `insertDetails()`
         return resultText;
     }
 ```
+
+The diagram below shows how to insert a new row to database
+
+![Alt text](image-3.png)
+
 The diagram below illustrates how to extract the data from `results`
 
 ![Alt text](image-2.png)
