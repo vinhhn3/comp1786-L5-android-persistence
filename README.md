@@ -101,7 +101,9 @@ Then, other activities will use the `DatabaseHelper` to perform CRUD operations
 
 ## Code
 
-First, we create `DatabaseHelper.java` class
+First, we create `DatabaseHelper.java` class. It will create the database with the design below
+
+![Alt text](image-1.png)
 
 ```java
 import android.content.Context;
@@ -208,6 +210,9 @@ Add two functions `getDetails()` and `insertDetails()`
         return resultText;
     }
 ```
+The diagram below illustrates how to extract the data from `results`
+
+![Alt text](image-2.png)
 
 Then, update the `MainActivity.java` to use `DatabaseHelper` class
 
