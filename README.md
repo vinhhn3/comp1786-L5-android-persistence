@@ -1,6 +1,32 @@
-# Shared Preferences Example
+# Shared Preferences
 
-Right-click on the project and select New > Android resource file.
+Shared Preferences is the one of way that storing and retrieving our data in our applications with the form of key, value pair.
+
+We should know that Android keeps Shared Preferences in XML file format. This file is called `shared_prefs` and you can access it via `Data/data/{application package}`.
+
+To get access to the preferences, there are three distinctive way.
+
+1- `getPreferences()`
+
+We should use it to access activity-specific preferences.
+
+2- `getSharedPreferences()`
+
+We should use it to access application-level preferences.
+
+3- `getDefaultSharedPreferences()`
+
+We should use it to get the shared preferences that Android’s overall preference framework.
+
+![Alt text](image.png)
+
+Here is an image that illustrates shared preference usage :
+
+![Alt text](image-1.png)
+
+## Shared Preferences Example
+
+Right-click on the project and select `New` > `Android resource file`.
 
 ![img.png](img.png)
 
@@ -56,10 +82,10 @@ Remember to create `updateIntervalValues` and `updateInterval` in `strings.xml`
 </resources>
 ```
 
-The android.preference package has been deprecated – we should use androidx.preference instead
+The `android.preference package` has been deprecated – we should use `androidx.preference` instead
 
 - We will need to add a dependency for the new package
-- Select File -> Project Structure and go the the Dependencies section
+- Select `File` > `Project Structure` and go the the Dependencies section
 
 ![img_2.png](img_2.png)
 
@@ -151,6 +177,8 @@ Last week we looked at how to introduce a toolbar
 - Add a menu file (I called it `preferences_menu.xml`) with a single menu item (text is Settings)
 
 ![img_6.png](img_6.png)
+
+Source code of `preferences_menu.xml`
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -251,13 +279,6 @@ Voila, we can create 2 activities and use Shared Preference to store data
 
 Using the `Device File Explorer` we can have a look at the content of the file
 
-Navigate `data` -> `dat`a -> `com.example.comp1786_l5_android_persistence` -> `shared_prefs`
+Navigate `data` -> `data` -> `com.example.comp1786_l5_android_persistence` -> `shared_prefs`
 
 ![img_9.png](img_9.png)
-
-
-
-
-
-
-
