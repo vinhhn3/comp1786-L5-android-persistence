@@ -91,8 +91,17 @@ First, we create the layout in `activity_main.xml`
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
+## Overview of the Project
 
-Then, we create `DatabaseHelper.java` class
+The project will have the `DatabaseHelper` to manage all CRUD actions to the sqlite
+
+Then, other activities will use the `DatabaseHelper` to perform CRUD operations
+
+![Alt text](image.png)
+
+## Code
+
+First, we create `DatabaseHelper.java` class
 
 ```java
 import android.content.Context;
@@ -194,13 +203,13 @@ Add two functions `getDetails()` and `insertDetails()`
             // Moves to the next row in the result set
             results.moveToNext();
         }
-        
+
         // Returns a long string of all results
         return resultText;
     }
 ```
 
-Update the `MainActivity.java` to use `DatabaseHelper` class
+Then, update the `MainActivity.java` to use `DatabaseHelper` class
 
 ```java
 public class MainActivity extends AppCompatActivity {
