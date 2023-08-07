@@ -1,233 +1,127 @@
-# Contact Database Sqlite
+## What is Room Database
 
-First, we create the layout in `activity_main.xml`
+Most Android applications require local data storage. In the past years, we have achieved this through the use of SQLite databases. 
 
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+Room is a persistent library that is part of the Android jetpack. It is built on top of SQLite. 
 
-    <TextView
-        android:id="@+id/name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Name:"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+The room persistent library has many advantages over raw SQLite.
 
-    <EditText
-        android:id="@+id/nameText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text=""
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name" />
+One advantage is that it saves a developer from writing a lot of boilerplate code to create and manage databases. It also provides compile-time validation of SQL queries.
 
-    <TextView
-        android:id="@+id/dob"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Date of Birth:"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameText" />
+This means that an application won’t compile if there is an SQL query error. This prevents the developer from encountering run time errors.
 
-    <EditText
-        android:id="@+id/dobText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text=""
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dob" />
+The main components are:
 
-    <TextView
-        android:id="@+id/email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Email:"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dobText" />
+- `Entity` - An entity is a class that is annotated with the @Entity annotation. This class represents a database table.
+- `DAO` - A Data Access Object is used to map SQL queries to functions. It’s an interface annotated with the @DAO annotation.
+- `Room Database` - This class acts as an access point to the SQL database. The class uses the DAO to issue queries to the SQL database.
 
-    <EditText
-        android:id="@+id/emailText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text=""
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email" />
+![img_5.png](img_5.png)
 
-    <Button
-        android:id="@+id/saveDetailsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Save Details"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailText" />
+## Refactor with Room Database
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+First, create these folders below
+
+```bash
+src
+|-- Models
+|-- DAOs
+|-- Database
+|-- Activities
 ```
-## Overview of the Project
 
-The project will have the `DatabaseHelper` to manage all CRUD actions to the sqlite
+## Add Dependencies:
+Make sure you have the necessary dependencies in your `build.gradle` file:
 
-Then, other activities will use the `DatabaseHelper` to perform CRUD operations
+```bash
+implementation "androidx.room:room-runtime:2.4.0"
+annotationProcessor "androidx.room:room-compiler:2.4.0"
+```
 
-![Alt text](image.png)
+## Create Entity Class:
+Create an Entity class that represents your data structure.
 
-## Code
-
-First, we create `DatabaseHelper.java` class. It will create the database with the design below
-
-![Alt text](image-1.png)
+In the folder `Models`, create `Person.java` class
 
 ```java
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+// /Models/Person.java
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
-public class DatabaseHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "details";
-
-    // A set of constants to store the column and table names
-    public static final String ID_COLUMN = "person_id";
-    public static final String NAME_COLUMN = "name";
-    public static final String DOB_COLUMN = "dob";
-    public static final String EMAIL_COLUMN = "email";
-
-    private SQLiteDatabase database;
-
-    private static final String DATABASE_CREATE = String.format(
-            // The SQL query to create the table
-            // %s expects a value of any type
-            "CREATE TABLE %s (" +
-                    "%s INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "%s TEXT, " +
-                    "%s TEXT, " +
-                    "%s TEXT)",
-            DATABASE_NAME, ID_COLUMN, NAME_COLUMN, DOB_COLUMN, EMAIL_COLUMN
-    );
-
-    // The constructor makes a call to the method in the super class, passing the database name
-    public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 1);
-        database = getWritableDatabase();
-    }
-
-    // Overriding the onCreate() method which generates the database
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        db.execSQL(DATABASE_CREATE);
-    }
-
-    // This method upgrades the database if the version number changes
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + DATABASE_NAME);
-
-        Log.v(this.getClass().getName(), DATABASE_NAME +
-                "database upgrade to version" + newVersion + " - old data lost"
-        );
-        onCreate(db);
-    }
+@Entity(tableName = "details")
+public class Person {
+    @PrimaryKey(autoGenerate = true)
+    public long person_id;
+    public String name;
+    public String dob;
+    public String email;
 }
 ```
 
-Add two functions `getDetails()` and `insertDetails()`
+## Create DAO (Data Access Object) Interface:
+Create a DAO interface to define the database operations.
+
+In the `DAOs` folder, create `PersonDao.java` class
 
 ```java
-    // Returns the automatically generated primary key
-    public long insertDetails(String name, String dob, String email) {
-        // ContentValues represents a single table row as a key/value map
-        ContentValues rowValues = new ContentValues();
+// /DAOs/PersonDao.java
+import androidx.room.Dao;
+import androidx.room.Insert;
+import androidx.room.Query;
 
-        rowValues.put(NAME_COLUMN, name);
-        rowValues.put(DOB_COLUMN, dob);
-        rowValues.put(EMAIL_COLUMN, email);
+import java.util.List;
 
-        return database.insertOrThrow(
-                DATABASE_NAME,
-                // nullColumnHack specifies a column that will be set to null if the ContentValues argument contains no data
-                null,
-                // Inserts ContentValues into the database
-                rowValues
-        );
-    }
+@Dao
+public interface PersonDao {
+    @Insert
+    long insertPerson(Person person);
 
-    public String getDetails() {
-        Cursor results = database.query(DATABASE_NAME,
-                // Defines the query to execute
-                new String[]{ID_COLUMN, NAME_COLUMN, DOB_COLUMN, EMAIL_COLUMN},
-                null, null, null, null, NAME_COLUMN
-        );
-        String resultText = "";
+    @Query("SELECT * FROM details ORDER BY name")
+    List<Person> getAllPersons();
+}
 
-        // Moves to the first position of the result set
-        results.moveToFirst();
-
-        // Checks whether there are more rows in the result set
-        while (!results.isAfterLast()) {
-
-            // Extracts the values from the row
-            int id = results.getInt(0);
-            String name = results.getString(1);
-            String dob = results.getString(2);
-            String email = results.getString(3);
-
-            // Concatenates the text values
-            resultText += id + " " + name + " " + dob + " " + email + "\n";
-
-            // Moves to the next row in the result set
-            results.moveToNext();
-        }
-
-        // Returns a long string of all results
-        return resultText;
-    }
 ```
 
-The diagram below shows how to insert a new row to database
+## Create Room Database:
+Create a Room Database class that defines your database instance and includes the DAO.
 
-![Alt text](image-3.png)
-
-The diagram below illustrates how to extract the data from `results`
-
-![Alt text](image-2.png)
-
-Then, update the `MainActivity.java` to use `DatabaseHelper` class
+In the folder `Database`, create the file `AppDatabase.java`
 
 ```java
+// /Database/AppDatabase.java
+import androidx.room.Database;
+import androidx.room.RoomDatabase;
+
+@Database(entities = {Person.class}, version = 1)
+public abstract class AppDatabase extends RoomDatabase {
+    public abstract PersonDao personDao();
+}
+```
+
+## Refactor `MainActivity`
+
+Move the files `MainActivity.java` and `DetailsActivity.java` to folder `Activities` and update them
+
+```java
+// /Activities/MainActivity.java
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
 public class MainActivity extends AppCompatActivity {
+    private AppDatabase appDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "details_db")
+                .allowMainThreadQueries() // For simplicity, don't use this in production
+                .build();
 
         Button saveDetailsButton = findViewById(R.id.saveDetailsButton);
 
@@ -239,12 +133,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
     private void saveDetails() {
-        // Creates an object of our helper class
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
-
-        // Get references to the EditText views and read their content
         EditText nameTxt = findViewById(R.id.nameText);
         EditText dobTxt = findViewById(R.id.dobText);
         EditText emailTxt = findViewById(R.id.emailText);
@@ -253,87 +142,61 @@ public class MainActivity extends AppCompatActivity {
         String dob = dobTxt.getText().toString();
         String email = emailTxt.getText().toString();
 
-        // Calls the insertDetails method we created
-        long personId = dbHelper.insertDetails(name, dob, email);
+        Person person = new Person();
+        person.name = name;
+        person.dob = dob;
+        person.email = email;
 
-        // Shows a toast with the automatically generated id
+        long personId = appDatabase.personDao().insertPerson(person);
+
         Toast.makeText(this, "Person has been created with id: " + personId,
                 Toast.LENGTH_LONG
         ).show();
+
+
+        // Launch Details Activity
+        Intent intent = new Intent(this, DetailsActivity.class);
+        startActivity(intent);
     }
 }
 ```
 
-Voila, we can store data to SQLite
-
-![img.png](img.png)
-
-To see the data, first we create `DetailsActivity.java`
-
-![img_1.png](img_1.png)
-
-Layout of `activity_details.xml`
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".DetailsActivity">
-
-    <TextView
-        android:id="@+id/detailsText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
-```
-
-Add these codes in `MainActivity.java` to start `DetailsActivity`
-
 ```java
-    // Launch Details Activity
-    Intent intent = new Intent(this, DetailsActivity.class);
-    startActivity(intent);
-```
+// /Activities/DetailsActivity.java
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.widget.TextView;
+import java.util.List;
 
-Inside `DetailsActivity`, add code below to display all data
-
-```java
 public class DetailsActivity extends AppCompatActivity {
+    private AppDatabase appDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        // Also declares an object of our helper class
-        DatabaseHelper db = new DatabaseHelper(this);
-
-        // Call the getDetails method we created
-        String details = db.getDetails();
+        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "details_db")
+                .allowMainThreadQueries() // For simplicity, don't use this in production
+                .build();
 
         TextView detailsTxt = findViewById(R.id.detailsText);
 
-        // The text returned is just displayed
-        detailsTxt.setText(details);
+        List<Person> persons = appDatabase.personDao().getAllPersons();
+
+        StringBuilder detailsBuilder = new StringBuilder();
+        for (Person person : persons) {
+            detailsBuilder.append(person.person_id).append(" ")
+                    .append(person.name).append(" ")
+                    .append(person.dob).append(" ")
+                    .append(person.email).append("\n");
+        }
+
+        detailsTxt.setText(detailsBuilder.toString());
     }
 }
 ```
 
-Voila, we can see all data in `DetailsActivity` now
+Please note that the above code includes calls to Room Database methods on the main thread using `allowMainThreadQueries()` for simplicity. 
 
-![img_2.png](img_2.png)
-
-![img_3.png](img_3.png)
-
-As of Android Studio 4.1 we can directly opening SQLite file from within the IDE
-
-This is done via the App Inspector
-
-![img_4.png](img_4.png)
+However, in a real app, you should use background threads or asynchronous methods to perform database operations.

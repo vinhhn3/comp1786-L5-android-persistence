@@ -1,4 +1,4 @@
-package com.example.comp1786_l5_android_persistence;
+package com.example.comp1786_l5_android_persistence.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,13 +8,23 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
+
+import com.example.comp1786_l5_android_persistence.Database.AppDatabase;
+import com.example.comp1786_l5_android_persistence.Models.Person;
+import com.example.comp1786_l5_android_persistence.R;
 
 public class MainActivity extends AppCompatActivity {
+    private AppDatabase appDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "details_db")
+                .allowMainThreadQueries() // For simplicity, don't use this in production
+                .build();
 
         Button saveDetailsButton = findViewById(R.id.saveDetailsButton);
 
@@ -22,16 +32,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 saveDetails();
+
             }
         });
     }
 
-
     private void saveDetails() {
-        // Creates an object of our helper class
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
-
-        // Get references to the EditText views and read their content
         EditText nameTxt = findViewById(R.id.nameText);
         EditText dobTxt = findViewById(R.id.dobText);
         EditText emailTxt = findViewById(R.id.emailText);
@@ -40,10 +46,13 @@ public class MainActivity extends AppCompatActivity {
         String dob = dobTxt.getText().toString();
         String email = emailTxt.getText().toString();
 
-        // Calls the insertDetails method we created
-        long personId = dbHelper.insertDetails(name, dob, email);
+        Person person = new Person();
+        person.name = name;
+        person.dob = dob;
+        person.email = email;
 
-        // Shows a toast with the automatically generated id
+        long personId = appDatabase.personDao().insertPerson(person);
+
         Toast.makeText(this, "Person has been created with id: " + personId,
                 Toast.LENGTH_LONG
         ).show();
