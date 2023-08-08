@@ -1,175 +1,113 @@
-## What is Room Database
+## Create dynamic lists with RecyclerView
 
-Most Android applications require local data storage. In the past years, we have achieved this through the use of SQLite databases. 
+RecyclerView makes it easy to efficiently display large sets of data. You supply the data and define how each item looks, and the RecyclerView library dynamically creates the elements when they're needed.
 
-Room is a persistent library that is part of the Android jetpack. It is built on top of SQLite. 
+As the name implies, RecyclerView recycles those individual elements. When an item scrolls off the screen, RecyclerView doesn't destroy its view. Instead, RecyclerView reuses the view for new items that have scrolled onscreen. 
 
-The room persistent library has many advantages over raw SQLite.
+RecyclerView improves performance and your app's responsiveness, and it reduces power consumption.
 
-One advantage is that it saves a developer from writing a lot of boilerplate code to create and manage databases. It also provides compile-time validation of SQL queries.
+In this refactor session, we will use `RecyclerView` and `CardView` to improve the UI
 
-This means that an application won’t compile if there is an SQL query error. This prevents the developer from encountering run time errors.
+![img_6.png](img_6.png)
 
-The main components are:
+## Create Card Layout
 
-- `Entity` - An entity is a class that is annotated with the @Entity annotation. This class represents a database table.
-- `DAO` - A Data Access Object is used to map SQL queries to functions. It’s an interface annotated with the @DAO annotation.
-- `Room Database` - This class acts as an access point to the SQL database. The class uses the DAO to issue queries to the SQL database.
+First, create a layout file for the card that will represent each contact. Create a new XML layout file: `item_contact_card.xml`
 
-![img_5.png](img_5.png)
+![img_7.png](img_7.png)
 
-## Refactor with Room Database
+![img_8.png](img_8.png)
 
-First, create these folders below
+`item_acontact_card.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/contactCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp">
 
-```bash
-src
-|-- models
-|-- dao
-|-- database
-|-- activities
+    <!-- Customize this layout as per your requirements -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/personName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+        <TextView
+            android:id="@+id/personDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
 ```
 
-## Add Dependencies:
-Make sure you have the necessary dependencies in your `build.gradle` file:
+## Create Adapter
 
-```bash
-implementation "androidx.room:room-runtime:2.4.0"
-annotationProcessor "androidx.room:room-compiler:2.4.0"
-```
-
-## Create Entity Class:
-Create an Entity class that represents your data structure.
-
-In the folder `models`, create `Person.java` class
+You will need to create a RecyclerView Adapter to bind your data to the card layout. Create a new Java class: `ContactAdapter.java`.
 
 ```java
-// /models/Person.java
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
+// ContactAdapter.java
+public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
+    private List<Person> persons;
 
-@Entity(tableName = "details")
-public class Person {
-    @PrimaryKey(autoGenerate = true)
-    public long person_id;
-    public String name;
-    public String dob;
-    public String email;
-}
-```
+    public ContactAdapter(List<Person> persons) {
+        this.persons = persons;
+    }
 
-## Create DAO (Data Access Object) Interface:
-Create a DAO interface to define the database operations.
-
-In the `dao` folder, create `PersonDao.java` class
-
-```java
-// /dao/PersonDao.java
-import androidx.room.Dao;
-import androidx.room.Insert;
-import androidx.room.Query;
-
-import java.util.List;
-
-@Dao
-public interface PersonDao {
-    @Insert
-    long insertPerson(Person person);
-
-    @Query("SELECT * FROM details ORDER BY name")
-    List<Person> getAllPersons();
-}
-
-```
-
-## Create Room Database:
-Create a Room Database class that defines your database instance and includes the DAO.
-
-In the folder `database`, create the file `AppDatabase.java`
-
-```java
-// /database/AppDatabase.java
-import androidx.room.Database;
-import androidx.room.RoomDatabase;
-
-@Database(entities = {Person.class}, version = 1)
-public abstract class AppDatabase extends RoomDatabase {
-    public abstract PersonDao personDao();
-}
-```
-
-## Refactor `MainActivity`
-
-Move the files `MainActivity.java` and `DetailsActivity.java` to folder `activities` and update them
-
-```java
-// /activities/MainActivity.java
-import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
-
-public class MainActivity extends AppCompatActivity {
-    private AppDatabase appDatabase;
+    @NonNull
+    @Override
+    public ContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(com.example.comp1786_l5_android_persistence.R.layout.item_contact_card, parent, false);
+        return new ContactViewHolder(itemView);
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "details_db")
-                .allowMainThreadQueries() // For simplicity, don't use this in production
-                .build();
-
-        Button saveDetailsButton = findViewById(R.id.saveDetailsButton);
-
-        saveDetailsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                saveDetails();
-            }
-        });
+    public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
+        Person person = persons.get(position);
+        holder.personName.setText(person.name);
+        holder.personDetails.setText(person.person_id + " " + person.dob + " " + person.email);
     }
 
-    private void saveDetails() {
-        EditText nameTxt = findViewById(R.id.nameText);
-        EditText dobTxt = findViewById(R.id.dobText);
-        EditText emailTxt = findViewById(R.id.emailText);
+    @Override
+    public int getItemCount() {
+        return persons.size();
+    }
 
-        String name = nameTxt.getText().toString();
-        String dob = dobTxt.getText().toString();
-        String email = emailTxt.getText().toString();
+    public static class ContactViewHolder extends RecyclerView.ViewHolder {
+        TextView personName, personDetails;
 
-        Person person = new Person();
-        person.name = name;
-        person.dob = dob;
-        person.email = email;
-
-        long personId = appDatabase.personDao().insertPerson(person);
-
-        Toast.makeText(this, "Person has been created with id: " + personId,
-                Toast.LENGTH_LONG
-        ).show();
-
-
-        // Launch Details Activity
-        Intent intent = new Intent(this, DetailsActivity.class);
-        startActivity(intent);
+        public ContactViewHolder(@NonNull View itemView) {
+            super(itemView);
+            personName = itemView.findViewById(R.id.personName);
+            personDetails = itemView.findViewById(R.id.personDetails);
+        }
     }
 }
 ```
 
-```java
-// /activities/DetailsActivity.java
-import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
-import android.widget.TextView;
-import java.util.List;
+## Modify DetailsActivity
 
+Update the `DetailsActivity.java` to use the RecyclerView and the new adapter.
+
+```java
+// DetailsActivity.java
 public class DetailsActivity extends AppCompatActivity {
     private AppDatabase appDatabase;
+    private RecyclerView recyclerView;
+    private ContactAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,23 +118,46 @@ public class DetailsActivity extends AppCompatActivity {
                 .allowMainThreadQueries() // For simplicity, don't use this in production
                 .build();
 
-        TextView detailsTxt = findViewById(R.id.detailsText);
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         List<Person> persons = appDatabase.personDao().getAllPersons();
 
-        StringBuilder detailsBuilder = new StringBuilder();
-        for (Person person : persons) {
-            detailsBuilder.append(person.person_id).append(" ")
-                    .append(person.name).append(" ")
-                    .append(person.dob).append(" ")
-                    .append(person.email).append("\n");
-        }
-
-        detailsTxt.setText(detailsBuilder.toString());
+        adapter = new ContactAdapter(persons);
+        recyclerView.setAdapter(adapter);
     }
 }
 ```
 
-Please note that the above code includes calls to Room Database methods on the main thread using `allowMainThreadQueries()` for simplicity. 
+`LayoutManager` in recyclerView helps us to figure out how we need to display the items on the screen. It can be linearly or in a grid. 
 
-However, in a real app, you should use background threads or asynchronous methods to perform database operations.
+`RecyclerView` provides by default a few implementations of layoutManager out of the box.
+
+It is like the governing body of recyclerView which tells the recyclerView's adapter when to create a new view.
+
+![img_9.png](img_9.png)
+
+## XML Layout Update
+
+Modify your `activity_details.xml` layout to include the RecyclerView.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.DetailsActivity">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
