@@ -24,10 +24,10 @@ First, create these folders below
 
 ```bash
 src
-|-- Models
-|-- DAOs
-|-- Database
-|-- Activities
+|-- models
+|-- dao
+|-- database
+|-- activities
 ```
 
 ## Add Dependencies:
@@ -41,10 +41,10 @@ annotationProcessor "androidx.room:room-compiler:2.4.0"
 ## Create Entity Class:
 Create an Entity class that represents your data structure.
 
-In the folder `Models`, create `Person.java` class
+In the folder `models`, create `Person.java` class
 
 ```java
-// /Models/Person.java
+// /models/Person.java
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -61,10 +61,10 @@ public class Person {
 ## Create DAO (Data Access Object) Interface:
 Create a DAO interface to define the database operations.
 
-In the `DAOs` folder, create `PersonDao.java` class
+In the `dao` folder, create `PersonDao.java` class
 
 ```java
-// /DAOs/PersonDao.java
+// /dao/PersonDao.java
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
@@ -85,10 +85,10 @@ public interface PersonDao {
 ## Create Room Database:
 Create a Room Database class that defines your database instance and includes the DAO.
 
-In the folder `Database`, create the file `AppDatabase.java`
+In the folder `database`, create the file `AppDatabase.java`
 
 ```java
-// /Database/AppDatabase.java
+// /database/AppDatabase.java
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
 
@@ -100,10 +100,10 @@ public abstract class AppDatabase extends RoomDatabase {
 
 ## Refactor `MainActivity`
 
-Move the files `MainActivity.java` and `DetailsActivity.java` to folder `Activities` and update them
+Move the files `MainActivity.java` and `DetailsActivity.java` to folder `activities` and update them
 
 ```java
-// /Activities/MainActivity.java
+// /activities/MainActivity.java
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
 ```
 
 ```java
-// /Activities/DetailsActivity.java
+// /activities/DetailsActivity.java
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;

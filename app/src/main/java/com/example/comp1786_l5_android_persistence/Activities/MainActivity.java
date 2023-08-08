@@ -1,4 +1,4 @@
-package com.example.comp1786_l5_android_persistence.Activities;
+package com.example.comp1786_l5_android_persistence.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,9 +10,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
-import com.example.comp1786_l5_android_persistence.Database.AppDatabase;
-import com.example.comp1786_l5_android_persistence.Models.Person;
 import com.example.comp1786_l5_android_persistence.R;
+import com.example.comp1786_l5_android_persistence.database.AppDatabase;
+import com.example.comp1786_l5_android_persistence.models.Person;
 
 public class MainActivity extends AppCompatActivity {
     private AppDatabase appDatabase;

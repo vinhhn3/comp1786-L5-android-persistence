@@ -1,10 +1,10 @@
-package com.example.comp1786_l5_android_persistence.DAOs;
+package com.example.comp1786_l5_android_persistence.dao;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import com.example.comp1786_l5_android_persistence.Models.Person;
+import com.example.comp1786_l5_android_persistence.models.Person;
 
 import java.util.List;
 
