@@ -1,6 +1,7 @@
 package com.example.comp1786_l5_android_persistence.dao;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
@@ -15,4 +16,7 @@ public interface PersonDao {
 
     @Query("SELECT * FROM details ORDER BY name")
     List<Person> getAllPersons();
+
+    @Delete
+    void deletePerson(Person person);
 }

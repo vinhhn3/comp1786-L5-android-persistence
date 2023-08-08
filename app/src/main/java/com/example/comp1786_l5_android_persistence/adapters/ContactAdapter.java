@@ -15,9 +15,16 @@ import java.util.List;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
     private List<Person> persons;
+    private OnDeleteClickListener onDeleteClickListener;
 
-    public ContactAdapter(List<Person> persons) {
+    public interface OnDeleteClickListener {
+        void onDeleteClick(Person person);
+    }
+
+
+    public ContactAdapter(List<Person> persons, OnDeleteClickListener onDeleteClickListener) {
         this.persons = persons;
+        this.onDeleteClickListener = onDeleteClickListener;
     }
 
     @NonNull
@@ -32,6 +39,12 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         Person person = persons.get(position);
         holder.personName.setText(person.name);
         holder.personDetails.setText(person.person_id + " " + person.dob + " " + person.email);
+
+        holder.itemView.setOnClickListener(v -> {
+            if (onDeleteClickListener != null) {
+                onDeleteClickListener.onDeleteClick(persons.get(position));
+            }
+        });
     }
 
     @Override
