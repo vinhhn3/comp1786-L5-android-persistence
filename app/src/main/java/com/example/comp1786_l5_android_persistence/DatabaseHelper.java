@@ -8,7 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "details";
+    private static final String DATABASE_NAME = "sqlite_example";
+    private static final String TABLE_NAME = "persons";
 
     // A set of constants to store the column and table names
     public static final String ID_COLUMN = "person_id";
@@ -18,7 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private SQLiteDatabase database;
 
-    private static final String DATABASE_CREATE = String.format(
+    private static final String TABLE_CREATE = String.format(
             // The SQL query to create the table
             // %s expects a value of any type
             "CREATE TABLE %s (" +
@@ -26,7 +27,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "%s TEXT, " +
                     "%s TEXT, " +
                     "%s TEXT)",
-            DATABASE_NAME, ID_COLUMN, NAME_COLUMN, DOB_COLUMN, EMAIL_COLUMN
+            TABLE_NAME, ID_COLUMN, NAME_COLUMN, DOB_COLUMN, EMAIL_COLUMN
     );
 
     // The constructor makes a call to the method in the super class, passing the database name
@@ -38,15 +39,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Overriding the onCreate() method which generates the database
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(DATABASE_CREATE);
+        db.execSQL(TABLE_CREATE);
     }
 
     // This method upgrades the database if the version number changes
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + DATABASE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
 
-        Log.v(this.getClass().getName(), DATABASE_NAME +
+        Log.v(this.getClass().getName(), TABLE_NAME +
                 "database upgrade to version" + newVersion + " - old data lost"
         );
         onCreate(db);
@@ -62,7 +63,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         rowValues.put(EMAIL_COLUMN, email);
 
         return database.insertOrThrow(
-                DATABASE_NAME,
+                TABLE_NAME,
                 // nullColumnHack specifies a column that will be set to null if the ContentValues argument contains no data
                 null,
                 // Inserts ContentValues into the database
@@ -71,7 +72,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public String getDetails() {
-        Cursor results = database.query(DATABASE_NAME,
+        Cursor results = database.query(TABLE_NAME,
                 // Defines the query to execute
                 new String[]{ID_COLUMN, NAME_COLUMN, DOB_COLUMN, EMAIL_COLUMN},
                 null, null, null, null, NAME_COLUMN
