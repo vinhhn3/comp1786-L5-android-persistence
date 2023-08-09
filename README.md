@@ -313,9 +313,22 @@ Layout of `activity_details.xml`
 Add these codes in `MainActivity.java` to start `DetailsActivity`
 
 ```java
-    // Launch Details Activity
-    Intent intent = new Intent(this, DetailsActivity.class);
-    startActivity(intent);
+public class MainActivity extends AppCompatActivity {
+    // ... (previous code)
+    private void saveDetails() {
+        // ... (previous code)
+
+        // Shows a toast with the automatically generated id
+        Toast.makeText(this, "Person has been created with id: " + personId,
+                Toast.LENGTH_LONG
+        ).show();
+        
+        // Launch Details Activity
+        Intent intent = new Intent(this, DetailsActivity.class);
+
+        startActivity(intent);
+    }
+}
 ```
 
 Inside `DetailsActivity`, add code below to display all data
