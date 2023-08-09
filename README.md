@@ -103,7 +103,7 @@ Then, other activities will use the `DatabaseHelper` to perform CRUD operations
 
 First, we create `DatabaseHelper.java` class. It will create the database with the design below
 
-![Alt text](image-1.png)
+![img_5.png](img_5.png)
 
 ```java
 import android.content.Context;
@@ -123,21 +123,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private SQLiteDatabase database;
 
     private static final String TABLE_CREATE = String.format(
-            // The SQL query to create the table
-            // %s expects a value of any type
-            // The query will be:
-            // CREATE TABLE persons(
-            //      person_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            //      name TEXT,
-            //      dob TEXT,
-            //      email TEXT
-            // )
-            "CREATE TABLE %s (" +
-                    "%s INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "%s TEXT, " +
-                    "%s TEXT, " +
-                    "%s TEXT)",
-            TABLE_NAME, ID_COLUMN, NAME_COLUMN, DOB_COLUMN, EMAIL_COLUMN
+        // The SQL query to create the table
+        // %s expects a value of any type
+        // The query will be:
+        // CREATE TABLE persons(
+        //      person_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        //      name TEXT,
+        //      dob TEXT,
+        //      email TEXT
+        // )
+        "CREATE TABLE %s (" +
+                "%s INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "%s TEXT, " +
+                "%s TEXT, " +
+                "%s TEXT)",
+        TABLE_NAME, ID_COLUMN, NAME_COLUMN, DOB_COLUMN, EMAIL_COLUMN
     );
 
     // The constructor makes a call to the method in the super class, passing the database name
@@ -168,7 +168,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 Add two functions `getDetails()` and `insertDetails()`
 
 ```java
-     // Returns the automatically generated primary key
+public class DatabaseHelper extends SQLiteOpenHelper {
+    
+    // ... (previous code)
+    
+    // Returns the automatically generated primary key
     public long insertDetails(String name, String dob, String email) {
         // ContentValues represents a single table row as a key/value map
         ContentValues rowValues = new ContentValues();
@@ -178,11 +182,11 @@ Add two functions `getDetails()` and `insertDetails()`
         rowValues.put(EMAIL_COLUMN, email);
 
         return database.insertOrThrow(
-            TABLE_NAME,
-            // nullColumnHack specifies a column that will be set to null if the ContentValues argument contains no data
-            null,
-            // Inserts ContentValues into the database
-            rowValues
+                TABLE_NAME,
+                // nullColumnHack specifies a column that will be set to null if the ContentValues argument contains no data
+                null,
+                // Inserts ContentValues into the database
+                rowValues
         );
     }
 
@@ -192,9 +196,9 @@ Add two functions `getDetails()` and `insertDetails()`
         // FROM persons
         // ORDER BY name
         Cursor results = database.query(TABLE_NAME,
-            // Defines the query to execute
-            new String[]{ID_COLUMN, NAME_COLUMN, DOB_COLUMN, EMAIL_COLUMN},
-            null, null, null, null, NAME_COLUMN
+                // Defines the query to execute
+                new String[]{ID_COLUMN, NAME_COLUMN, DOB_COLUMN, EMAIL_COLUMN},
+                null, null, null, null, NAME_COLUMN
         );
         String resultText = "";
 
@@ -209,10 +213,10 @@ Add two functions `getDetails()` and `insertDetails()`
             String name = results.getString(1);
             String dob = results.getString(2);
             String email = results.getString(3);
-    
+
             // Concatenates the text values
             resultText += id + " " + name + " " + dob + " " + email + "\n";
-    
+
             // Moves to the next row in the result set
             results.moveToNext();
         }
@@ -220,6 +224,7 @@ Add two functions `getDetails()` and `insertDetails()`
         // Returns a long string of all results
         return resultText;
     }
+}
 ```
 
 The diagram below shows how to insert a new row to database
