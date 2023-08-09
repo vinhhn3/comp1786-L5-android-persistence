@@ -30,6 +30,10 @@ src
 |-- activities
 ```
 
+The diagram illustrates how these components work together
+
+![img_6.png](img_6.png)
+
 ## Add Dependencies:
 Make sure you have the necessary dependencies in your `build.gradle` file:
 
