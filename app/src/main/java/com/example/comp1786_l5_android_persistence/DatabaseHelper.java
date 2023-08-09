@@ -9,9 +9,9 @@ import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "sqlite_example";
-    private static final String TABLE_NAME = "persons";
 
     // A set of constants to store the column and table names
+    private static final String TABLE_NAME = "persons";
     public static final String ID_COLUMN = "person_id";
     public static final String NAME_COLUMN = "name";
     public static final String DOB_COLUMN = "dob";
@@ -22,6 +22,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_CREATE = String.format(
             // The SQL query to create the table
             // %s expects a value of any type
+            // The query will be:
+            // CREATE TABLE persons(
+            //      person_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            //      name TEXT,
+            //      dob TEXT,
+            //      email TEXT
+            // )
             "CREATE TABLE %s (" +
                     "%s INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "%s TEXT, " +
@@ -72,6 +79,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public String getDetails() {
+        // The query will be:
+        // SELECT person_id, name, dob, email
+        // FROM persons
+        // ORDER BY name
         Cursor results = database.query(TABLE_NAME,
                 // Defines the query to execute
                 new String[]{ID_COLUMN, NAME_COLUMN, DOB_COLUMN, EMAIL_COLUMN},
