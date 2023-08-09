@@ -48,7 +48,7 @@ In the folder `models`, create `Person.java` class
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "details")
+@Entity(tableName = "persons")
 public class Person {
     @PrimaryKey(autoGenerate = true)
     public long person_id;
@@ -76,7 +76,7 @@ public interface PersonDao {
     @Insert
     long insertPerson(Person person);
 
-    @Query("SELECT * FROM details ORDER BY name")
+    @Query("SELECT * FROM persons ORDER BY name")
     List<Person> getAllPersons();
 }
 
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "details_db")
+        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "sqlite_example_db")
                 .allowMainThreadQueries() // For simplicity, don't use this in production
                 .build();
 
@@ -176,7 +176,7 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "details_db")
+        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "sqlite_example_db")
                 .allowMainThreadQueries() // For simplicity, don't use this in production
                 .build();
 

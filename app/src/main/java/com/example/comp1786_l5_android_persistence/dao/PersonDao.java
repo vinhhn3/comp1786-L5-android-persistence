@@ -13,6 +13,6 @@ public interface PersonDao {
     @Insert
     long insertPerson(Person person);
 
-    @Query("SELECT * FROM details ORDER BY name")
+    @Query("SELECT * FROM persons ORDER BY name")
     List<Person> getAllPersons();
 }
