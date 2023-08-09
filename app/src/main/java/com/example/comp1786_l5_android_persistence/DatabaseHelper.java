@@ -9,7 +9,6 @@ import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "sqlite_example";
-
     // A set of constants to store the column and table names
     private static final String TABLE_NAME = "persons";
     public static final String ID_COLUMN = "person_id";

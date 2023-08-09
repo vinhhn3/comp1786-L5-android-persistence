@@ -112,9 +112,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "details";
-
+    private static final String DATABASE_NAME = "sqlite_example";
     // A set of constants to store the column and table names
+    private static final String TABLE_NAME = "persons";
     public static final String ID_COLUMN = "person_id";
     public static final String NAME_COLUMN = "name";
     public static final String DOB_COLUMN = "dob";
@@ -122,15 +122,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private SQLiteDatabase database;
 
-    private static final String DATABASE_CREATE = String.format(
+    private static final String TABLE_CREATE = String.format(
             // The SQL query to create the table
             // %s expects a value of any type
+            // The query will be:
+            // CREATE TABLE persons(
+            //      person_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            //      name TEXT,
+            //      dob TEXT,
+            //      email TEXT
+            // )
             "CREATE TABLE %s (" +
                     "%s INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "%s TEXT, " +
                     "%s TEXT, " +
                     "%s TEXT)",
-            DATABASE_NAME, ID_COLUMN, NAME_COLUMN, DOB_COLUMN, EMAIL_COLUMN
+            TABLE_NAME, ID_COLUMN, NAME_COLUMN, DOB_COLUMN, EMAIL_COLUMN
     );
 
     // The constructor makes a call to the method in the super class, passing the database name
@@ -142,15 +149,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Overriding the onCreate() method which generates the database
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(DATABASE_CREATE);
+        db.execSQL(TABLE_CREATE);
     }
 
     // This method upgrades the database if the version number changes
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + DATABASE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
 
-        Log.v(this.getClass().getName(), DATABASE_NAME +
+        Log.v(this.getClass().getName(), TABLE_NAME +
                 "database upgrade to version" + newVersion + " - old data lost"
         );
         onCreate(db);
@@ -161,7 +168,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 Add two functions `getDetails()` and `insertDetails()`
 
 ```java
-    // Returns the automatically generated primary key
+     // Returns the automatically generated primary key
     public long insertDetails(String name, String dob, String email) {
         // ContentValues represents a single table row as a key/value map
         ContentValues rowValues = new ContentValues();
@@ -171,19 +178,23 @@ Add two functions `getDetails()` and `insertDetails()`
         rowValues.put(EMAIL_COLUMN, email);
 
         return database.insertOrThrow(
-                DATABASE_NAME,
-                // nullColumnHack specifies a column that will be set to null if the ContentValues argument contains no data
-                null,
-                // Inserts ContentValues into the database
-                rowValues
+            TABLE_NAME,
+            // nullColumnHack specifies a column that will be set to null if the ContentValues argument contains no data
+            null,
+            // Inserts ContentValues into the database
+            rowValues
         );
     }
 
     public String getDetails() {
-        Cursor results = database.query(DATABASE_NAME,
-                // Defines the query to execute
-                new String[]{ID_COLUMN, NAME_COLUMN, DOB_COLUMN, EMAIL_COLUMN},
-                null, null, null, null, NAME_COLUMN
+        // The query will be:
+        // SELECT person_id, name, dob, email
+        // FROM persons
+        // ORDER BY name
+        Cursor results = database.query(TABLE_NAME,
+            // Defines the query to execute
+            new String[]{ID_COLUMN, NAME_COLUMN, DOB_COLUMN, EMAIL_COLUMN},
+            null, null, null, null, NAME_COLUMN
         );
         String resultText = "";
 
@@ -198,10 +209,10 @@ Add two functions `getDetails()` and `insertDetails()`
             String name = results.getString(1);
             String dob = results.getString(2);
             String email = results.getString(3);
-
+    
             // Concatenates the text values
             resultText += id + " " + name + " " + dob + " " + email + "\n";
-
+    
             // Moves to the next row in the result set
             results.moveToNext();
         }
