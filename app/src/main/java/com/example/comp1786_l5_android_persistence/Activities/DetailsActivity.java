@@ -28,7 +28,7 @@ public class DetailsActivity extends AppCompatActivity implements ContactAdapter
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "details_db")
+        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "sqlite_example_db")
                 .allowMainThreadQueries() // For simplicity, don't use this in production
                 .build();
 
