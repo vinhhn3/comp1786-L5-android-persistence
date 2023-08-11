@@ -1,4 +1,4 @@
-package com.example.comp1786_l5_android_persistence.activities;
+package com.example.comp1786_l5_android_persistence.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;

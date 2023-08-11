@@ -1,4 +1,4 @@
-package com.example.comp1786_l5_android_persistence.activities;
+package com.example.comp1786_l5_android_persistence.Activities;
 
 import android.os.Bundle;
 import android.widget.TextView;
@@ -14,14 +14,14 @@ import java.util.List;
 
 
 public class DetailsActivity extends AppCompatActivity {
-    private AppDatabase appDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "sqlite_example_db")
+        // For simplicity, don't use this in production
+        AppDatabase appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "sqlite_example_db")
                 .allowMainThreadQueries() // For simplicity, don't use this in production
                 .build();
 
