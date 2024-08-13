@@ -56,7 +56,9 @@ First, create a layout file for the card that will represent each contact. Creat
 
 ## Create Adapter
 
-You will need to create a RecyclerView Adapter to bind your data to the card layout. Create a new Java class: `ContactAdapter.java`.
+You will need to create a RecyclerView Adapter to bind your data to the card layout. 
+
+Create a new Java class: `ContactAdapter.java`.
 
 ```java
 // ContactAdapter.java
@@ -70,7 +72,9 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     @NonNull
     @Override
     public ContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(com.example.comp1786_l5_android_persistence.R.layout.item_contact_card, parent, false);
+        View itemView = LayoutInflater
+            .from(parent.getContext())
+            .inflate(com.example.comp1786_l5_android_persistence.R.layout.item_contact_card, parent, false);
         return new ContactViewHolder(itemView);
     }
 
@@ -114,7 +118,8 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "sqlite_example_db")
+        appDatabase = Room
+                .databaseBuilder(getApplicationContext(), AppDatabase.class, "sqlite_example_db")
                 .allowMainThreadQueries() // For simplicity, don't use this in production
                 .build();
 
