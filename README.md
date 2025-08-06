@@ -229,9 +229,109 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 The diagram below shows how to insert a new row to database
 
+```bash
++---------------------------+
+| Start                     |
++---------------------------+
+           |
+           v
++---------------------------+
+| Create new ContentValues  |
+| object named rowValues    |
++---------------------------+
+           |
+           v
++--------------------------------+
+| Put (NAME_COLUMN, name)        |
+| into rowValues                 |
++--------------------------------+
+           |
+           v
++--------------------------------+
+| Put (DOB_COLUMN, dob)          |
+| into rowValues                 |
++--------------------------------+
+           |
+           v
++--------------------------------+
+| Put (EMAIL_COLUMN, email)      |
+| into rowValues                 |
++--------------------------------+
+           |
+           v
++-------------------------------------------------+
+| Call database.insertOrThrow with:               |
+| - table name (TABLE_NAME)                       |
+| - nullColumnHack (null)                         |
+| - content values (rowValues)                    |
++-------------------------------------------------+
+           |
+           v
++---------------------------+
+| Return inserted row ID    |
++---------------------------+
+           |
+           v
++---------------------------+
+| End                       |
++---------------------------+
+```
+
 ![Alt text](image-3.png)
 
 The diagram below illustrates how to extract the data from `results`
+
+```bash
++--------------------------+
+| Start                    |
++--------------------------+
+           |
+           v
++--------------------------+
+| Execute SQL Query        |
+| SELECT person_id, name,  |
+| dob, email FROM persons  |
+| ORDER BY name            |
++--------------------------+
+           |
+           v
++--------------------------+
+| Move to First Row        |
++--------------------------+
+           |
+           v
++--------------------------+
+| Is After Last Row?       |<--------------------+
++--------------------------+                     |
+       | No                                      |
+       v                                         |
++--------------------------+                     |
+| Read id, name, dob,       |                    |
+| and email from current row|                    |
++--------------------------+                     |
+           |                                     |
+           v                                     |
++--------------------------+                     |
+| Append to resultText     |                     |
++--------------------------+                     |
+           |                                     |
+           v                                     |
++--------------------------+                     |
+| Move to Next Row         |---------------------+
++--------------------------+
+           |
+         Yes
+           v
++--------------------------+
+| Return resultText        |
++--------------------------+
+           |
+           v
++--------------------------+
+| End                      |
++--------------------------+
+
+```
 
 ![Alt text](image-2.png)
 
